@@ -34,6 +34,8 @@ port 6379                                                    # 端口
 daemonize yes                                                # 以后台进程方式启动redis
 requirepass jiang                                            # 配置登录密码是jiang
 protected-mode yes                                           # 开启保护模式
+dir /usr/redis-4.0.14/data                                   # 持久化数据所在目录(注意：手动创建目录)
+logfile "/usr/redis-4.0.14/log/redis-server.log"             # 日志所在目录(注意：手动创建目录和文件)
 ```
 
 #### 五、配置Redis开机启动
