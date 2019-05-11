@@ -13,6 +13,9 @@ $ help @set                       # 查看set命令的详细使用帮助(其它�
 $ flushdb                         # 清空当前数据库的数据
 $ flushall                        # 清空所有数据库的数据
 
+$ keys *                          # 查找所有key
+$ keys ?                          # 查找只有一个字符的key(注意：写几个?号代表查找几个字符的key)
+
 $ type 'key'                      # 显示某个key的数据类型
 $ OBJECT encodeing 'key'          # 编码某个key的数据，显示原始数据类型
 
@@ -34,9 +37,6 @@ $ get name                        # 看看ASCII的值是啥
 
 $ incrby name 2                   # 递增指定值(可负数就是减) 
 $ incrbyfloat name 2.2            # 递增指定带小数点的值 
-
-$ keys *                          # 查找所有key
-$ keys ?                          # 查找只有一个字符的key(注意：写几个?号代表查找几个字符的key)
 
 $ strlen 'key'                    # 显示某个key的数据长度(适用于string类型数据)
 ```
