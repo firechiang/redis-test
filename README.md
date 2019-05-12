@@ -30,6 +30,10 @@ $ sudo chkconfig redis on               # 设置redis开机启动
 $ sudo chkconfig redis off              # 关闭redis开机启动
 ```
 
+#### 十一、RDB持久化的策略
+##### 11.1、自动:按照配置文件中的条件满足就执行bgsave(非阻塞方式)
+##### 11.2、手动:客户端发起save(阻塞方式)，bgsave(非阻塞方式)命令
+
 [1]: https://github.com/MicrosoftArchive/redis/releases
 [2]: https://github.com/firechiang/redis-test/tree/master/docs/centos-single-node-install-dev.md
 [3]: https://github.com/firechiang/redis-test/tree/master/docs/centos-single-node-install-prod.md
