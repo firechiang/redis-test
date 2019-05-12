@@ -31,7 +31,7 @@ $ sudo chkconfig redis off              # 关闭redis开机启动
 ```
 
 #### 十一、RDB持久化的策略
-##### 11.1、自动:按照配置文件中的条件满足就执行bgsave(非阻塞方式)
+##### 11.1、redis默认的方式，按照配置文件中的条件满足就执行bgsave(非阻塞方式)
 ##### 11.2、手动:客户端发起save(阻塞方式)，bgsave(非阻塞方式)命令
 
 [1]: https://github.com/MicrosoftArchive/redis/releases
