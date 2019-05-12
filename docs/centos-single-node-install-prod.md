@@ -15,7 +15,7 @@ $ cd /usr/redis-4.0.14/bin                                   # 到redis安装目
 
 $ ./redis-server                                             # 启动redis，测试是否安装成功
 $ ps -aux | grep redis                                       # 查看redis进程
-$ kill -9 7869                                               # 杀掉redis进程
+$ redis-cli shutdown                                         # 停止redis
 ```
 
 #### 三、配置环境变量[vi ~/.bashrc]
