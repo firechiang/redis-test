@@ -13,7 +13,7 @@ $ sudo make & make install                                    # 编译安装
 
 $ ./src/redis-server                                          # 启动redis，测试是否安装成功
 $ ps -aux | grep redis                                        # 查看redis进程
-$ kill -9 7869                                                # 杀掉redis进程
+$ redis-cli shutdown                                          # 停止redis
 ```
 
 #### 三、修改[vi /usr/redis/redis-4.0.14/redis.conf]配置文件(配置项都存在，只需要修改值即可)
