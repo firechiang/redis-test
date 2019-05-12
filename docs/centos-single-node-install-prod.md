@@ -46,8 +46,8 @@ $ sudo cp /usr/redis-4.0.14/utils/redis_init_script /etc/init.d/redis
 
 ##### 5.2、修改Redis启动脚本[vi /etc/init.d/redis]
 ```bash
-EXEC=/usr/redis-4.0.14/src/redis-server                      # redis服务脚本所在目录
-CLIEXEC=/usr/redis-4.0.14/src/redis-cli                      # redis客户端脚本所在目录
+EXEC=/usr/redis-4.0.14/bin/redis-server                      # redis服务脚本所在目录
+CLIEXEC=/usr/redis-4.0.14/bin/redis-cli                      # redis客户端脚本所在目录
 CONF="/usr/redis-4.0.14/redis.conf"                          # redis配置文件在目录(注意：这个配置是带"双引号"的)
 ```
 
