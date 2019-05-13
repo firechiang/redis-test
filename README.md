@@ -40,7 +40,7 @@ Everysec(默认，推荐使用): 服务器每一秒调用一次fdatasync，将�
 No: 服务器不主动调用fdatasync，由系统决定何时将缓冲区的命令写入磁盘，这种模式下，服务器遭遇以外停机时，丢失命令的数据时不确定的。
 三者的运行速度: always的速度最慢，everysec和no都很快。
 ```
-##### 11.5、AOF重写(就是替换原来的持久化文件)的触发方式，手动: 客户端向服务器发送bgrewriteaop命令。自动: 在配置文件里面配置如下参数
+##### 11.5、AOF重写(优化替换原来的AOF持久化文件)的触发方式，手动: 客户端向服务器发送bgrewriteaop命令。自动: 在配置文件里面配置如下参数
 ```bash
 auto-aof-rewrite-min-size 64M   # 触发AOF重写所需的最小体积，只有AOF文件体积大于等于这个值时才会考虑是否进行AOF重写(这个选项用于避免过小的AOF文件进行重写)
 auto-aof-rewrite-percentage 100 # 这个配置的意思是当AOF文件的增量大于起始auto-aof-rewrite-min-size的100%时(就是文件大小翻了一倍)，才会触发AOF重写
