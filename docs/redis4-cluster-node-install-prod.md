@@ -66,7 +66,7 @@ port 7000                                                    # 注意：将7000�
 $CLIEXEC -p 7000 -a jiang shutdown                           # 将 $CLIEXEC -p $REDISPORT -a jiang shutdown 替换成 $CLIEXEC -p 7000 -a jiang shutdown
 ```
 
-#### 八、集群中任选一台安装Rubby环境(集群控制工具依赖环境)
+#### 八、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
 ```bash
 $ wget -P /home/tools https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz
 $ cd /home/tools
@@ -85,12 +85,12 @@ $ sudo make && make install
 $ gem install --local /usr/redis-4.0.14/redis-4.1.1.gem      # 安装redis集群控制依赖(redis-4.1.1.gem文件我们在第一步已经下载好了)
 ```
 
-#### 九、在装有Rubby环境的节点上修改集群控制工具的配置文件[vi /opt/ruby-2.6.3/lib/ruby/gems/2.6.0/gems/redis-4.1.1/lib/redis/client.rb]为其指定Redis密码，集群所有节点都要修改(如果不知道client.rb文件在哪里，可使用该命令查找：find / -name 'client.rb')
+#### 九、修改集群控制工具的配置文件[vi /opt/ruby-2.6.3/lib/ruby/gems/2.6.0/gems/redis-4.1.1/lib/redis/client.rb]为其指定Redis密码，集群所有节点都要修改(如果不知道client.rb文件在哪里，可使用该命令查找：find / -name 'client.rb')
 ```bash
 :password => "jiang"
 ```
 
-#### 十、配置Redis开机启动(集群的各个节点上都要配置)
+#### 十、配置Redis开机启动(集群所有节点都要配置)
 ##### 10.1、复制Redis启动脚本到 /etc/init.d/redis
 ```bash
 $ sudo cp /usr/redis-4.0.14/utils/redis_init_script /etc/init.d/redis
