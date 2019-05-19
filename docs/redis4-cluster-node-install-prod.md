@@ -105,7 +105,7 @@ $ sudo chkconfig redis on                                    # 设置redis开机
 $ sudo chkconfig redis off                                   # 关闭redis开机启动
 ```
 
-#### 十一、在装有Rubby环境的节点上，创建集群(注意：集群最少三个主节点，创建节点时要使用IP否则可能会报：ERR Invalid node address specified 错误)
+#### 十一、任选一台机器，创建集群(注意：集群最少三个主节点，创建节点时要使用IP否则可能会报：ERR Invalid node address specified 错误)
 ```bash
 $ cd /usr/redis-4.0.14/bin
 # --replicas 1 是指定副本数量，1就是指每一个主节点，都有一个从节点，现在共6台机器，那就是3主3备(主从分配规则: 按照创建命令的填写顺序，先创建主节点，再创建从节点)
