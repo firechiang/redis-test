@@ -64,8 +64,7 @@ $ wget -P /home/tools https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz
 $ cd /home/tools
 $ tar -zxvf ruby-2.6.3.tar.gz -C ./
 $ cd ruby-2.6.3
-$ sudo mkdir -p /opt/ruby-2.6.3
-$ ./configure --prefix=/opt/ruby-2.6.3
+$ sudo ./configure --prefix=/opt/ruby-2.6.3
 $ sudo make && make install
 $ ln -s /opt/ruby-2.6.3/bin/ruby /usr/bin/ruby
 $ ln -s /opt/ruby-2.6.3/bin/gem /usr/bin/gem
