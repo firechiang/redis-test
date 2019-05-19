@@ -32,9 +32,19 @@ logfile "/usr/redis-4.0.14/log/redis-server.log"             # 日志所在目�
 
 cluster-enabled yes                                          # 打开集群模式
 cluster-config-file /usr/redis-4.0.14/cluster-nodes.conf     # 集群信息文件(这个文件是Redis集群自动生成的)
+cluster-node-timeout 15000                                   # 集群节点超时时间
 ```
 
-#### 四、分发Redis安装文件到各个节点
+#### 四、修改Redis启动脚本[vi /usr/redis-4.0.14/utils/redis_init_script]
+```bash
+EXEC=/usr/redis-4.0.14/bin/redis-server                      # redis服务脚本所在目录
+CLIEXEC=/usr/redis-4.0.14/bin/redis-cli                      # redis客户端脚本所在目录
+CONF="/usr/redis-4.0.14/redis.conf"                          # redis配置文件在目录(注意：这个配置是带"双引号"的)
+
+$CLIEXEC -p $REDISPORT -a jiang shutdown                     # 关闭redis时所使用的代码，加上 -a jiang(就是Redis密码)
+```
+
+#### 五、分发Redis安装文件到各个节点
 ```bash
 $ scp -r /usr/redis-4.0.14 root@server002:/usr/redis-4.0.14
 $ scp -r /usr/redis-4.0.14 root@server003:/usr/redis-4.0.14
@@ -43,12 +53,12 @@ $ scp -r /usr/redis-4.0.14 root@server005:/usr/redis-4.0.14
 $ scp -r /usr/redis-4.0.14 root@server006:/usr/redis-4.0.14
 ```
 
-#### 五、修改[vi /usr/redis-4.0.14/redis.conf]各个节点上的端口号，从7000-7005
+#### 六、修改[vi /usr/redis-4.0.14/redis.conf]各个节点上的端口号，从7000-7005
 ```bash
 port 7000                                                    # 注意：将7000修改成当前机器Redis的端口
 ```
 
-#### 六、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
+#### 七、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
 ```bash
 $ yum install -y ruby rubygems
 $ gem install --local /usr/redis-4.0.14/redis-4.1.1.gem      # 安装redis集群控制依赖(redis-4.1.1.gem文件我们在第一步已经下载好了)
@@ -59,7 +69,7 @@ $ gem install --local /usr/redis-4.0.14/redis-4.1.1.gem      # 安装redis集群
 :password => "jiang"
 ```
 
-#### 七、配置环境变量[vi ~/.bashrc]，(集群所有节点都要配)
+#### 八、配置环境变量[vi ~/.bashrc]，(集群所有节点都要配)
 ```bash
 export REDIS_HOME=/usr/redis-4.0.14
 PATH=$PATH:$REDIS_HOME/bin                                   # linux以 : 号隔开，windows以 ; 号隔开
@@ -68,13 +78,13 @@ $ source ~/.bashrc                                           # （系统重读�
 $ echo $REDIS_HOME                                           # 查看是否能获取到环境变量的值
 ```
 
-#### 八、启动各个节点上的Redis
+#### 九、启动各个节点上的Redis
 ```bash
 $ redis-server /usr/redis-4.0.14/redis.conf                  # 根据指定配置文件启动Redis
 $ tail -111f /usr/redis-4.0.14/log/redis-server.log          # 查看日志
 ```
 
-#### 九、到集群任意一台机器上执行命令，创建集群(注意：集群最少三个主节点)
+#### 十、到集群任意一台机器上执行命令，创建集群(注意：集群最少三个主节点)
 ```bash
 # --replicas 1 是指定副本数量，1就是指每一个主节点，都有一个从节点，现在共6台机器，那就是3主3备(主从分配规则: 按照创建命令的填写顺序，先创建主节点，再创建从节点)
 $ redis-trib.rb create --replicas 1 server001:7000 server002:7001 server003:7002 server004:7003 server005:7004 server006:7005
