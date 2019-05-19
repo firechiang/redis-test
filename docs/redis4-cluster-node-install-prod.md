@@ -68,6 +68,7 @@ $CLIEXEC -p 7000 -a jiang shutdown                           # 将 $CLIEXEC -p $
 
 #### 八、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
 ```bash
+$ sudo yum install -y gcc                                    # 安装gcc编译器，如果没有安装就安装一下
 $ wget -P /home/tools https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz
 $ cd /home/tools
 $ tar -zxvf ruby-2.6.3.tar.gz -C ./
