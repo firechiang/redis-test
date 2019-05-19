@@ -60,6 +60,15 @@ port 7000                                                    # 注意：将7000�
 
 #### 七、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
 ```bash
+$ wget -P /home/tools https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz
+$ cd /home/tools
+$ tar -zxvf ruby-2.6.3.tar.gz -C ./
+$ cd ruby-2.6.3
+$ sudo mkdir -p /opt/ruby-2.6.3
+$ ./configure --prefix=/opt/ruby-2.6.3
+$ sudo make && make install
+$ ln -s /opt/ruby-2.6.3/bin/ruby /usr/bin/ruby
+$ ln -s /opt/ruby-2.6.3/bin/gem /usr/bin/gem
 $ yum install -y ruby rubygems
 $ gem install --local /usr/redis-4.0.14/redis-4.1.1.gem      # 安装redis集群控制依赖(redis-4.1.1.gem文件我们在第一步已经下载好了)
 ```
