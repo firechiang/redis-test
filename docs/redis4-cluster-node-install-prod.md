@@ -1,7 +1,7 @@
 #### 一、环境准备
 ```bash
 $ sudo mkdir -p /usr/redis-4.0.14                            # 创建redis安装目录
-$ wget -P /usr/redis-4.0.14 http://rubygems.org/downloads/redis-4.1.1.gem
+$ wget -P /usr/redis-4.0.14 http://rubygems.org/downloads/redis-3.3.0.gem
 $ sudo yum install -y gcc                                    # 安装gcc编译环境
 $ wget http://download.redis.io/releases/redis-4.0.14.tar.gz # 下载安装包
 $ sudo tar -zxvf redis-4.0.14.tar.gz -C ./                   # 解压到当前目录
@@ -71,25 +71,11 @@ $CLIEXEC -p 7000 -a jiang shutdown                           # 将 $CLIEXEC -p $
 
 #### 八、安装Rubby环境(集群所有节点都要安装，集群控制工具依赖环境)
 ```bash
-$ sudo yum install -y gcc                                    # 安装gcc编译器，如果没有安装就安装一下
-$ wget -P /home/tools https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.3.tar.gz
-$ cd /home/tools
-$ tar -zxvf ruby-2.6.3.tar.gz -C ./
-$ cd ruby-2.6.3
-$ sudo ./configure --prefix=/opt/ruby-2.6.3
-$ sudo make && make install
-$ sudo ln -s /opt/ruby-2.6.3/bin/ruby /usr/bin/ruby
-$ sudo ln -s /opt/ruby-2.6.3/bin/gem /usr/bin/gem
-$ ruby -v                                                    # 验证ruby是否安装成功
-$ yum -y install zlib-devel
-$ cd /home/tools/ruby-2.6.3/ext/zlib
-$ ruby ./extconf.rb
-$ vi /home/tools/ruby-2.6.3/ext/zlib/Makefile                # 将 zlib.o: $(top_srcdir)/include/ruby.h 替换成 zlib.o: ../../include/ruby.h
-$ sudo make && make install
-$ gem install --local /usr/redis-4.0.14/redis-4.1.1.gem      # 安装redis集群控制依赖(redis-4.1.1.gem文件我们在第一步已经下载好了)
+$ yum install ruby rubygems
+$ gem install --local /usr/redis-4.0.14/redis-3.3.0.gem
 ```
 
-#### 九、修改集群控制工具的配置文件[vi /opt/ruby-2.6.3/lib/ruby/gems/2.6.0/gems/redis-4.1.1/lib/redis/client.rb]为其指定Redis密码，集群所有节点都要修改(如果不知道client.rb文件在哪里，可使用该命令查找：find / -name 'client.rb')
+#### 九、修改集群控制工具的配置文件[vi /usr/local/share/gems/gems/redis-3.3.0/lib/redis/client.rb]为其指定Redis密码，集群所有节点都要修改(如果不知道client.rb文件在哪里，可使用该命令查找：find / -name 'client.rb')
 ```bash
 :password => "jiang"
 ```
@@ -119,10 +105,62 @@ $ ./redis-trib.rb create --replicas 1 192.168.229.133:7000 192.168.229.129:7001 
 ```bash
 $ cd /usr/redis-4.0.14/bin
 $ ./redis-cli -c -p 7000 -a jiang                            # -c表示集群模式连接
+$ cluster info                                               # 查看集群信息
+$ cluster nodes                                              # 查看集群所有节点信息
+
 $ set k1 k1
 $ get k1 k1
 ```
 
+#### 十三、集群新增主节点
+```bash
+$ ./redis-trib.rb                                                         # 查看 redis-trib.rb 脚本使用帮助  
+$ ./redis-trib.rb add-node 192.168.83.143:7006 192.168.83.143:7000        # 集群添加一个主节点(第一个为新增节点，第二个为集群中已知存在节点(任意一个))
+$ ./redis-trib.rb reshard 192.168.83.143:7006                             # 为新增的主节点分配slot(槽位)，不然它不能存储数据
 
-#### 十三、删除redis安装包和解压目录(看情况而定)
+How many slots do you want to move (from 1 to 16384)? 500                 # 你希望将多少个slot(槽位)移动到新的节点上，可以自己设置，比如500个slot(槽位)      
+What is the receiving node ID? 2f9a662051adec43b8c8f567340cede230f4d25a   # 接收这些slot(槽位)的节点的id(输入新节点ID即可，ID可进入Redis客户端使用 cluster nodes命令查看)
+Please enter all the source node IDs.
+  Type 'all' to use all the nodes as source nodes for the hash slots.
+  Type 'done' once you entered all the source nodes IDs.
+Source node #1:all                                                        # 抽取那些节点的slot(槽位)到新节点中：all为所有主节点，可以直接填写ID，最后填写done表示确定）
+```
+
+#### 十四、集群删除主节点(原理：先将slot(槽位)重新移动到其他主节点上去，再进行删除操作，不然存放的数据就丢失了)
+```bash
+$ ./redis-trib.rb reshard 192.168.83.143:7003                             # 移动slot(槽位)
+
+M: 2f9a662051adec43b8c8f567340cede230f4d25a 192.168.83.143:7003
+   slots:22-165,5461-5627,10923-11088 (477 slots) master
+   0 additional replica(s)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+How many slots do you want to move (from 1 to 16384)? 477                 # 这里填的就是7003拥有的slot(槽位)数，上面有打印出来的
+What is the receiving node ID? 94378bbe72297a47a86e4621c64cd73951f08b0b   # 这里是接收slot(槽位)的主节点id，我填的是7000的id
+Please enter all the source node IDs.
+  Type 'all' to use all the nodes as source nodes for the hash slots.
+  Type 'done' once you entered all the source nodes IDs.
+Source node #1:2f9a662051adec43b8c8f567340cede230f4d25a                   # 这里是数据源节点，当然填的是7003的Id了
+Source node #2:done                                                       # 确认
+
+# 删除节点
+$ ./redis-trib.rb del-node 192.168.83.143:7003 2f9a662051adec43b8c8f5673  # 参数是IP和端口，以及节点的ID(ID可进入Redis客户端使用 cluster nodes命令查看)
+```
+
+#### 十五、集群新增从节点
+```bash
+$ ./redis-trib.rb add-node 192.168.83.143:7003 192.168.83.143:7000        # 集群添加一个从节点(第一个为新增节点，第二个为集群中已知存在节点(任意一个))
+$ /usr/redis-4.0.15/bin/redis-cli -c -h 192.168.83.143 -p 7003 -a jiang   # 连接到刚刚新增的节点
+$ cluster replicate 94378bbe72297a47a86e4621c64cd73951f08b0b              # 指定当前节点的主节点ID
+```
+
+#### 十六、集群删除从节点
+```bash
+$ ./redis-trib.rb del-node 192.168.83.143:7003 34f30d8c7e0ed7970b9be7714  # 参数是IP和端口，以及节点的ID(ID可进入Redis客户端使用 cluster nodes命令查看)
+```
+
+
+#### 十七、删除redis安装包和解压目录(看情况而定)
 
