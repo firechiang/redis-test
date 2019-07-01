@@ -28,6 +28,9 @@ protected-mode yes                                           # 开启保护模�
 dir /usr/redis-5.0.5/data                                    # 持久化数据所在目录(注意：手动创建目录)
 logfile "/usr/redis-5.0.5/log/redis-server.log"              # 日志所在目录(注意：手动创建目录)
 pidfile /usr/redis-5.0.5/redis.pid
+# 解决异步复制和脑裂导致的数据丢失
+min-replicas-to-write 1                                      # 主节点必须至少有1个从节点在进行正常复制，否则就停止对外写服务
+min-replicas-max-lag 10                                      # 主从同步数据超过不能超过10秒，否则就停止对外写服务
 ```
 
 #### 四、配置Redis开机启动
