@@ -33,6 +33,10 @@ cluster-enabled yes                                         # 打开集群模式
 masterauth jiang                                            # 从节点同步数据时，访问主节点所使用的密码(Redis节点的密码)
 cluster-config-file /usr/redis-5.0.5/cluster-nodes.conf     # 集群信息文件(这个文件是Redis集群自动生成的，如果要重新创建集群需删除各个节点的这个文件(删除此文件，将丢失集群slot(槽位)信息，请慎重))
 
+# 解决异步复制和脑裂导致的数据丢失
+min-replicas-to-write 1                                     # 主节点必须至少有1个从节点在进行正常复制，否则就停止对外写服务
+min-replicas-max-lag 10                                     # 主从同步数据超过不能超过10秒，否则就停止对外写服务
+
 # 以下配置一般不配
 cluster-node-timeout 10000                                  # 集群节点超时时间
 cluster-replica-validity-factor 5                           # 切换为主机的时间(0-10，值越小说明检查越频繁)
