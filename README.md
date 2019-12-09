@@ -30,6 +30,9 @@ $ service redis stop                    # 停止redis(注意：如果redis有设
 $ redis-cli -p 6379 -a jiang shutdown   # 停止redis(用登录密码连接redis然后执行shutdown停止redis)
 $ sudo chkconfig redis on               # 设置redis开机启动
 $ sudo chkconfig redis off              # 关闭redis开机启动
+
+$ config get *                          # 获取Redis的配置信息
+$ config set dbfilename dump.rdb        # 设置Redis的dbfilename配置信息
 ```
 
 #### 十三、Redis集群分片
