@@ -32,6 +32,7 @@ $ sudo chkconfig redis on               # 设置redis开机启动
 $ sudo chkconfig redis off              # 关闭redis开机启动
 
 $ config get *                          # 获取Redis的配置信息
+$ config get dbfilename                 # 获取Redis的dbfilename配置信息
 $ config set dbfilename dump.rdb        # 设置Redis的dbfilename配置信息
 ```
 
